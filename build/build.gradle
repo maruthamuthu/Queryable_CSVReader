@@ -1,0 +1,52 @@
+apply plugin : 'java'
+
+defaultTasks 'startBuild'
+
+
+def source_dir = "./../source/"
+def output_dir = "./output"
+def classes_dir = output_dir + "/classes/"
+def lib_dir = "./../lib/"
+
+
+apply from: 'gradle/ant-wrapper.gradle'
+
+
+task startBuild (dependsOn: ['clean', 'compile', 'makeJar']) << {
+    println 'Build completed !'
+    println 'Check out the CSVQueryReader.jar under ./output directory'
+}
+
+
+task clean << {
+    file(output_dir).deleteDir()
+    println 'Clean completed'
+}
+
+
+task compile << {
+
+    antJavac(
+            srcdir: source_dir,
+            destdir: classes_dir,
+            classpath: fileTree(lib_dir).collect { File file ->
+                file.absolutePath
+            }.join(':')
+    )
+
+    println 'compile completed'
+
+}
+
+compile.mustRunAfter clean
+
+task makeJar << {
+    antJar(
+            basedir: classes_dir,
+            destfile: output_dir + "/CSVQueryReader.jar",
+    )
+
+    println 'jar creation completed'
+}
+
+makeJar.mustRunAfter compile

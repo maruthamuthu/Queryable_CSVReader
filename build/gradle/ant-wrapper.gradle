@@ -1,0 +1,16 @@
+ext.antJavac = { params, closure={ it } ->
+
+    mkdir params.destdir
+
+    params.memoryinitialsize ="256m"
+    params.memorymaximumsize ="1024m"
+    params.debug = "on"
+    params.fork = true
+    def aJavac = project.createAntBuilder()
+    aJavac.javac(params, closure)
+}
+
+ext.antJar = { params, closure={ it } ->
+    def aJar = project.createAntBuilder()
+    aJar.jar(params, closure)
+}
